@@ -67,6 +67,32 @@ export function buildSongDeepLink(songId: string): string {
 }
 
 /**
+ * Build a deep link URI for opening a collection in Sonic
+ *
+ * Deep Link Structure:
+ * sonic://collection/[collectionId]?isRemote=true
+ *
+ * @param collectionId - The ID of the collection to open
+ * @param isRemote - Whether the collection is remote
+ * @returns The complete deep link URI
+ */
+export function buildCollectionDeepLink(collectionId: string, isRemote?: boolean): string {
+  if (!collectionId || typeof collectionId !== 'string') {
+    throw new Error('Invalid collectionId provided to buildCollectionDeepLink');
+  }
+
+  // Sanitize collectionId - remove any URL-unsafe characters
+  const sanitizedId = encodeURIComponent(collectionId);
+
+  let deepLink = `${APP_SCHEME_PREFIX}${DEEP_LINK_PATHS.collection}/${sanitizedId}`;
+  if (isRemote !== undefined) {
+    deepLink += `?isRemote=${isRemote}`;
+  }
+
+  return deepLink;
+}
+
+/**
  * Attempt to open a song in the Sonic app
  *
  * This function:
@@ -116,6 +142,28 @@ export async function openSong(songId: string): Promise<void> {
     console.error('[Sonic] Error attempting to open deep link:', error);
     // Don't throw - the app might still open even if this errors
     // The caller's timeout mechanism will handle the fallback
+    return Promise.resolve();
+  }
+}
+
+/**
+ * Attempt to open a collection in the Sonic app
+ *
+ * @param collectionId - The ID of the collection to open
+ * @param isRemote - Whether the collection is remote
+ * @returns Promise that resolves after the navigation attempt
+ */
+export async function openCollection(collectionId: string, isRemote?: boolean): Promise<void> {
+  try {
+    const deepLink = buildCollectionDeepLink(collectionId, isRemote);
+
+    console.debug('[Sonic] Attempting to open deep link:', deepLink);
+
+    window.location.href = deepLink;
+
+    return Promise.resolve();
+  } catch (error) {
+    console.error('[Sonic] Error attempting to open deep link:', error);
     return Promise.resolve();
   }
 }
