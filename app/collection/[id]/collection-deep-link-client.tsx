@@ -1,28 +1,29 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { Download, Disc3 } from 'lucide-react';
-import { openSong } from '@/lib/deep-link';
+import { Download, ListMusic } from 'lucide-react';
+import { openCollection } from '@/lib/deep-link';
 import { fetchRemoteConfig } from '@/lib/fetch-config';
 import { DEEP_LINK_TIMEOUT_MS, LOADING_MESSAGES, ERROR_MESSAGES, getStoreUrl } from '@/lib/constants';
 import type { AppConfig } from '@/types/app-config';
 
-interface SongDeepLinkClientProps {
-  songId: string;
+interface CollectionDeepLinkClientProps {
+  collectionId: string;
+  isRemote?: boolean;
 }
 
 type PageState = 'opening' | 'fallback';
 
 /**
- * Song Deep Link Client Component
+ * Collection Deep Link Client Component
  *
- * Handles deep linking for songs:
- * 1. Attempts to open the Sonic app with a deep link immediately on mount
+ * Handles deep linking for collections:
+ * 1. Attempts to open the Sonic app with a collection deep link immediately on mount
  * 2. Displays opening animation
  * 3. Fetches remote configuration in the background specifically to retrieve the update URL
  * 4. Shows fallback download UI if redirect doesn't happen within 2 seconds
  */
-export function SongDeepLinkClient({ songId }: SongDeepLinkClientProps) {
+export function CollectionDeepLinkClient({ collectionId, isRemote }: CollectionDeepLinkClientProps) {
   const [pageState, setPageState] = useState<PageState>('opening');
   const [appConfig, setAppConfig] = useState<AppConfig | null>(null);
 
@@ -34,13 +35,14 @@ export function SongDeepLinkClient({ songId }: SongDeepLinkClientProps) {
    * Initialize deep linking flow
    */
   useEffect(() => {
-    // Attempt to open the song in Sonic app immediately
-    openSong(songId);
+    // Attempt to open the collection in Sonic app immediately
+    openCollection(collectionId, isRemote);
 
     // Fetch config asynchronously in the background to resolve the download URL
     fetchRemoteConfig()
       .then((config) => {
         if (mountedRef.current) {
+          console.log(config);
           setAppConfig(config);
         }
       })
@@ -62,7 +64,7 @@ export function SongDeepLinkClient({ songId }: SongDeepLinkClientProps) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [songId]);
+  }, [collectionId, isRemote]);
 
   /**
    * Handle download button click
@@ -106,10 +108,10 @@ export function SongDeepLinkClient({ songId }: SongDeepLinkClientProps) {
   function renderFallback() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-black via-neutral-950 to-black px-4">
-        {/* Sonic Logo / Icon */}
+        {/* Sonic Collection Icon */}
         <div className="mb-8">
           <div className="w-24 h-24 rounded-full bg-neutral-900 border-2 border-neutral-800 flex items-center justify-center">
-            <Disc3 className="w-12 h-12 text-amber-500" />
+            <ListMusic className="w-12 h-12 text-amber-500" />
           </div>
         </div>
 
@@ -129,7 +131,7 @@ export function SongDeepLinkClient({ songId }: SongDeepLinkClientProps) {
         {/* Description */}
         <p className="text-sm text-neutral-500 text-center max-w-md mb-8">
           The Sonic app isn&apos;t currently installed on this device. Download it
-          now to start streaming your favorite music.
+          now to view and play this collection.
         </p>
 
         {/* Download Button */}

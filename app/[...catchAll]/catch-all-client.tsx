@@ -2,51 +2,35 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Download, Disc3 } from 'lucide-react';
-import { openSong } from '@/lib/deep-link';
-import { fetchRemoteConfig } from '@/lib/fetch-config';
-import { DEEP_LINK_TIMEOUT_MS, LOADING_MESSAGES, ERROR_MESSAGES, getStoreUrl } from '@/lib/constants';
-import type { AppConfig } from '@/types/app-config';
-
-interface SongDeepLinkClientProps {
-  songId: string;
-}
+import { APP_SCHEME_PREFIX, DEEP_LINK_TIMEOUT_MS, LOADING_MESSAGES, ERROR_MESSAGES, getStoreUrl } from '@/lib/constants';
 
 type PageState = 'opening' | 'fallback';
 
 /**
- * Song Deep Link Client Component
+ * Catch All Deep Link Client Component
  *
- * Handles deep linking for songs:
- * 1. Attempts to open the Sonic app with a deep link immediately on mount
+ * Attempts to redirect to the Sonic app home page (sonic://):
+ * 1. Attempts to open sonic:// on mount
  * 2. Displays opening animation
- * 3. Fetches remote configuration in the background specifically to retrieve the update URL
- * 4. Shows fallback download UI if redirect doesn't happen within 2 seconds
+ * 3. Shows fallback UI with a download option if it doesn't open within 2 seconds
  */
-export function SongDeepLinkClient({ songId }: SongDeepLinkClientProps) {
+export function CatchAllClient() {
   const [pageState, setPageState] = useState<PageState>('opening');
-  const [appConfig, setAppConfig] = useState<AppConfig | null>(null);
 
   // Refs to manage timers for cleanup
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const mountedRef = useRef(true);
 
   /**
-   * Initialize deep linking flow
+   * Attempt deep link redirection
    */
   useEffect(() => {
-    // Attempt to open the song in Sonic app immediately
-    openSong(songId);
-
-    // Fetch config asynchronously in the background to resolve the download URL
-    fetchRemoteConfig()
-      .then((config) => {
-        if (mountedRef.current) {
-          setAppConfig(config);
-        }
-      })
-      .catch((error) => {
-        console.error('[Sonic] Error fetching remote config:', error);
-      });
+    try {
+      console.debug('[Sonic] Attempting to open deep link home:', APP_SCHEME_PREFIX);
+      window.location.href = APP_SCHEME_PREFIX;
+    } catch (error) {
+      console.error('[Sonic] Error opening home deep link:', error);
+    }
 
     // Set timeout for fallback UI
     timeoutRef.current = setTimeout(() => {
@@ -55,22 +39,21 @@ export function SongDeepLinkClient({ songId }: SongDeepLinkClientProps) {
       }
     }, DEEP_LINK_TIMEOUT_MS);
 
-    // Cleanup function: Clear timers and mark as unmounted
+    // Cleanup function
     return () => {
       mountedRef.current = false;
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [songId]);
+  }, []);
 
   /**
    * Handle download button click
    */
   const handleDownloadClick = useCallback(() => {
-    const url = appConfig?.native.updateUrl || getStoreUrl();
-    window.location.href = url;
-  }, [appConfig]);
+    window.location.href = getStoreUrl();
+  }, []);
 
   /**
    * Render opening state
@@ -106,10 +89,10 @@ export function SongDeepLinkClient({ songId }: SongDeepLinkClientProps) {
   function renderFallback() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-black via-neutral-950 to-black px-4">
-        {/* Sonic Logo / Icon */}
+        {/* Sonic Logo */}
         <div className="mb-8">
           <div className="w-24 h-24 rounded-full bg-neutral-900 border-2 border-neutral-800 flex items-center justify-center">
-            <Disc3 className="w-12 h-12 text-amber-500" />
+            <Disc3 className="w-12 h-12 text-amber-500 animate-spin-slow" />
           </div>
         </div>
 

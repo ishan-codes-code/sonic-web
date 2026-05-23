@@ -1,65 +1,230 @@
-import Image from "next/image";
+import { REMOTE_CONFIG_URL, STORE_URLS } from '@/lib/constants';
+import type { AppConfig } from '@/types/app-config';
 
-export default function Home() {
+/**
+ * Fetch the download URL from remote app config on the server.
+ * Falls back to Play Store URL if the fetch fails.
+ */
+async function getDownloadUrl(): Promise<string> {
+  try {
+    const res = await fetch(REMOTE_CONFIG_URL, {
+      // Revalidate every 5 minutes on the server
+      next: { revalidate: 300 },
+    });
+    if (!res.ok) throw new Error('config fetch failed');
+    const data: AppConfig = await res.json();
+    if (data?.native?.updateUrl) return data.native.updateUrl;
+  } catch {
+    // fall through to default
+  }
+  return STORE_URLS.playStore;
+}
+
+export default async function Home() {
+  const downloadUrl = await getDownloadUrl();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-[#0a0a0a] font-sans">
+
+      {/* Nav */}
+      <nav className="flex items-center justify-between border-b border-white/[0.04] px-10 py-5">
+        <div className="flex items-center gap-2">
+          <div className="h-[7px] w-[7px] rounded-sm bg-amber-300" />
+          <span className="font-mono text-[18px] font-bold tracking-[-1px] text-stone-100">
+            sonic
+          </span>
+        </div>
+
+        <div className="flex items-center gap-8">
+          <a href="#features" className="text-[13px] font-medium text-neutral-500 hover:text-neutral-600 transition-colors">Features</a>
+          <a href="#about" className="text-[13px] font-medium text-neutral-500 hover:text-neutral-600 transition-colors">About</a>
+          <a href="#download" className="text-[13px] font-medium text-neutral-500 hover:text-neutral-600 transition-colors">Download</a>
+        </div>
+
+        <a
+          href={downloadUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-xl bg-amber-300 px-5 py-2.5 text-[13px] font-bold text-[#0a0a0a] transition-opacity hover:opacity-90"
+        >
+          Get the app
+        </a>
+      </nav>
+
+      <div className="mx-auto max-w-4xl px-10">
+
+        {/* Hero */}
+        <section className="py-24 text-center">
+          <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-300/[0.06] px-4 py-1.5">
+            <div className="h-[5px] w-[5px] rounded-full bg-amber-300" />
+            <span className="text-[10px] font-bold uppercase tracking-[2px] text-amber-300">
+              Now in Beta
+            </span>
+          </div>
+
+          <h1 className="mb-5 text-[52px] font-black leading-[1.1] tracking-[-2px] text-stone-100">
+            Music that actually{" "}
+            <span className="text-amber-300">gets you.</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+          <p className="mx-auto mb-10 max-w-[400px] text-[15px] leading-[1.75] text-neutral-500">
+            Sonic learns what you love and keeps the good stuff coming.
+            No ads, no noise — just your music.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+
+          <div className="flex items-center justify-center gap-3">
+            <a
+              href={downloadUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-xl bg-amber-300 px-7 py-3.5 text-[14px] font-extrabold text-[#0a0a0a] transition-opacity hover:opacity-90"
+            >
+              Download the app
+            </a>
+            <a
+              href="#features"
+              className="rounded-xl border border-white/[0.06] px-6 py-3.5 text-[14px] font-semibold text-neutral-500 transition-colors hover:text-neutral-600"
+            >
+              Learn more
+            </a>
+          </div>
+        </section>
+
+        {/* Illustration slot */}
+        <div className="mb-24 flex h-72 w-full flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-white/[0.06] bg-white/[0.02]">
+          {/*
+            When ready, replace this with:
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+              src="/illustration.png"
+              alt="Sonic app"
+              width={500}
+              height={260}
+              className="h-64 w-auto object-contain"
             />
-            Deploy Now
-          </a>
+          */}
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/[0.06] bg-[#111]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3d3d3d" strokeWidth="1.5" strokeLinecap="round">
+              <rect x="3" y="3" width="18" height="18" rx="3" />
+              <path d="M3 9h18M9 21V9" />
+            </svg>
+          </div>
+          <span className="text-[10px] font-bold uppercase tracking-[2px] text-neutral-500">
+            Illustration goes here
+          </span>
+        </div>
+
+        <div className="h-px w-full bg-white/[0.04]" />
+
+        {/* Features */}
+        <section id="features" className="py-20">
+          <p className="mb-3 text-[10px] font-bold uppercase tracking-[3px] text-amber-300">
+            Features
+          </p>
+          <h2 className="mb-3 text-[32px] font-black leading-[1.15] tracking-[-1px] text-stone-100">
+            Built different.
+          </h2>
+          <p className="mb-12 max-w-[380px] text-[14px] leading-[1.75] text-neutral-500">
+            Everything you'd expect from a music app — and a few things you wouldn't.
+          </p>
+
+          <div className="grid grid-cols-3 gap-4">
+            {/* Accent card */}
+            <div className="rounded-2xl border border-amber-300/15 bg-amber-300/[0.03] p-6">
+              <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-xl border border-amber-300/20 bg-amber-300/[0.08]">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="1.6" strokeLinecap="round">
+                  <path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" />
+                </svg>
+              </div>
+              <p className="mb-2 text-[14px] font-bold text-amber-300">Smart recommendations</p>
+              <p className="text-[13px] leading-[1.7] text-neutral-500">
+                Learns from your history in real time. The more you listen, the better it gets.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/[0.04] bg-white/[0.03] p-6">
+              <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-xl border border-white/[0.06] bg-white/[0.03]">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#3d3d3d" strokeWidth="1.6" strokeLinecap="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+              </div>
+              <p className="mb-2 text-[14px] font-bold text-neutral-600">Fast playback</p>
+              <p className="text-[13px] leading-[1.7] text-neutral-500">
+                Instant streaming. No buffering, no waiting — just press play.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/[0.04] bg-white/[0.03] p-6">
+              <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-xl border border-white/[0.06] bg-white/[0.03]">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#3d3d3d" strokeWidth="1.6" strokeLinecap="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </div>
+              <p className="mb-2 text-[14px] font-bold text-neutral-600">No tracking</p>
+              <p className="text-[13px] leading-[1.7] text-neutral-500">
+                Your data stays yours. No ads, no selling your listening habits.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <div className="h-px w-full bg-white/[0.04]" />
+
+        {/* About / dev */}
+        <section id="about" className="py-20">
+          <p className="mb-3 text-[10px] font-bold uppercase tracking-[3px] text-amber-300">
+            About
+          </p>
+          <h2 className="mb-3 text-[32px] font-black leading-[1.15] tracking-[-1px] text-stone-100">
+            One dev. One obsession.
+          </h2>
+
+          <div className="mt-8 flex w-full flex-row items-start gap-4 rounded-2xl border border-white/[0.04] bg-white/[0.03] p-6">
+            <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full border border-white/[0.07] bg-[#111]">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="1.4" strokeLinecap="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+              </svg>
+            </div>
+            <div>
+              <p className="mb-0.5 text-[14px] font-bold text-neutral-600">Ishan</p>
+              <p className="mb-3 text-[12px] text-amber-300/70">@ishan-co</p>
+              <p className="text-[13px] leading-[1.75] text-neutral-500">
+                I built Sonic because every music app felt like it was designed for someone else.
+                This one&apos;s for us — the people who actually care about how music feels.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <div className="h-px w-full bg-white/[0.04]" />
+
+        {/* Download CTA */}
+        <section id="download" className="py-20 text-center">
+          <h2 className="mb-3 text-[32px] font-black leading-tight tracking-[-1px] text-stone-100">
+            Ready to listen?
+          </h2>
+          <p className="mb-8 text-[14px] text-neutral-500">It&apos;s free. Always will be.</p>
+
           <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            href={downloadUrl}
             target="_blank"
             rel="noopener noreferrer"
+            className="inline-block rounded-2xl bg-amber-300 px-10 py-4 text-[15px] font-extrabold text-[#0a0a0a] transition-opacity hover:opacity-90"
           >
-            Documentation
+            Download Sonic
           </a>
+        </section>
+
+      </div>
+
+      {/* Footer */}
+      <footer className="flex items-center justify-between border-t border-white/[0.04] px-10 py-7">
+        <div className="flex items-center gap-2">
+          <div className="h-[7px] w-[7px] rounded-sm bg-amber-300" />
+          <span className="font-mono text-[15px] font-bold tracking-[-1px] text-stone-100">sonic</span>
         </div>
-      </main>
+        <p className="text-[12px] text-neutral-500">© 2026 Sonic. Built by Ishan.</p>
+      </footer>
+
     </div>
   );
 }

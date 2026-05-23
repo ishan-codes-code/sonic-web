@@ -161,8 +161,8 @@ export async function fetchRemoteConfig(): Promise<AppConfig> {
     const response = await fetch(REMOTE_CONFIG_URL, {
       // Don't cache at HTTP level - we manage caching in sessionStorage
       cache: 'no-store',
-      // 5 second timeout for remote config fetch
-      signal: AbortSignal.timeout(5000),
+      // 10 second timeout for remote config fetch
+      signal: AbortSignal.timeout(10000),
     });
 
     if (!response.ok) {

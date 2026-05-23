@@ -52,6 +52,7 @@ export const APP_SCHEME_PREFIX = `${APP_SCHEME}://`;
 /** Available deep link paths in the app */
 export const DEEP_LINK_PATHS = {
   song: 'song',
+  collection: 'collection',
 } as const;
 
 // ============================================================================
