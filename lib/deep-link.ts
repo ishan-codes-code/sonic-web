@@ -133,6 +133,15 @@ export function buildCollectionDeepLink(
  * // If user navigates away, clear the timer
  * return () => clearTimeout(fallbackTimer);
  */
+<<<<<<< HEAD
+export function openSong(songId: string, isRemote?: boolean): void {
+  try {
+    const deepLink = buildSongDeepLink(songId, isRemote);
+    console.debug("[Sonic] Attempting to open deep link:", deepLink);
+    window.location.href = deepLink;
+  } catch (error) {
+    console.error("[Sonic] Error attempting to open deep link:", error);
+=======
 export async function openSong(songId: string): Promise<void> {
   try {
     const deepLink = buildSongDeepLink(songId);
@@ -151,6 +160,7 @@ export async function openSong(songId: string): Promise<void> {
     // Don't throw - the app might still open even if this errors
     // The caller's timeout mechanism will handle the fallback
     return Promise.resolve();
+>>>>>>> main
   }
 }
 
@@ -161,6 +171,15 @@ export async function openSong(songId: string): Promise<void> {
  * @param isRemote - Whether the collection is remote
  * @returns Promise that resolves after the navigation attempt
  */
+<<<<<<< HEAD
+export function openCollection(collectionId: string, isRemote?: boolean): void {
+  try {
+    const deepLink = buildCollectionDeepLink(collectionId, isRemote);
+    console.debug("[Sonic] Attempting to open deep link:", deepLink);
+    window.location.href = deepLink;
+  } catch (error) {
+    console.error("[Sonic] Error attempting to open deep link:", error);
+=======
 export async function openCollection(
   collectionId: string,
   isRemote?: boolean,
@@ -176,6 +195,7 @@ export async function openCollection(
   } catch (error) {
     console.error("[Sonic] Error attempting to open deep link:", error);
     return Promise.resolve();
+>>>>>>> main
   }
 }
 

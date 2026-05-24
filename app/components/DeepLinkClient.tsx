@@ -1,46 +1,23 @@
 'use client';
-<<<<<<< HEAD
-import { ListMusic } from 'lucide-react';
-import { DeepLinkClient } from '@/app/components/DeepLinkClient';
-=======
 
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { Download, ListMusic } from 'lucide-react';
-import { openCollection } from '@/lib/deep-link';
+import { Download } from 'lucide-react';
+import { openSong, openCollection } from '@/lib/deep-link';
 import { fetchRemoteConfig } from '@/lib/fetch-config';
 import { DEEP_LINK_TIMEOUT_MS, LOADING_MESSAGES, ERROR_MESSAGES, getStoreUrl } from '@/lib/constants';
 import type { AppConfig } from '@/types/app-config';
->>>>>>> main
 
-interface CollectionDeepLinkClientProps {
-  collectionId: string;
+interface DeepLinkClientProps {
+  id: string;
   isRemote?: boolean;
+  type: 'song' | 'collection';
+  icon: React.ReactNode;
+  fallbackDescription: string;
 }
 
-<<<<<<< HEAD
-export function CollectionDeepLinkClient({ collectionId, isRemote }: CollectionDeepLinkClientProps) {
-  return (
-    <DeepLinkClient
-      id={collectionId}
-      isRemote={isRemote}
-      type="collection"
-      icon={<ListMusic className="w-12 h-12 text-amber-500" />}
-      fallbackDescription="The Sonic app isn't currently installed on this device. Download it now to view and play this collection."
-    />
-  );
-=======
 type PageState = 'opening' | 'fallback';
 
-/**
- * Collection Deep Link Client Component
- *
- * Handles deep linking for collections:
- * 1. Attempts to open the Sonic app with a collection deep link immediately on mount
- * 2. Displays opening animation
- * 3. Fetches remote configuration in the background specifically to retrieve the update URL
- * 4. Shows fallback download UI if redirect doesn't happen within 2 seconds
- */
-export function CollectionDeepLinkClient({ collectionId, isRemote }: CollectionDeepLinkClientProps) {
+export function DeepLinkClient({ id, isRemote, type, icon, fallbackDescription }: DeepLinkClientProps) {
   const [pageState, setPageState] = useState<PageState>('opening');
   const [appConfig, setAppConfig] = useState<AppConfig | null>(null);
 
@@ -52,14 +29,17 @@ export function CollectionDeepLinkClient({ collectionId, isRemote }: CollectionD
    * Initialize deep linking flow
    */
   useEffect(() => {
-    // Attempt to open the collection in Sonic app immediately
-    openCollection(collectionId, isRemote);
+    // Attempt to open the item in Sonic app immediately
+    if (type === 'song') {
+      openSong(id, isRemote);
+    } else {
+      openCollection(id, isRemote);
+    }
 
     // Fetch config asynchronously in the background to resolve the download URL
     fetchRemoteConfig()
       .then((config) => {
         if (mountedRef.current) {
-          console.log(config);
           setAppConfig(config);
         }
       })
@@ -81,7 +61,7 @@ export function CollectionDeepLinkClient({ collectionId, isRemote }: CollectionD
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [collectionId, isRemote]);
+  }, [id, isRemote, type]);
 
   /**
    * Handle download button click
@@ -125,10 +105,10 @@ export function CollectionDeepLinkClient({ collectionId, isRemote }: CollectionD
   function renderFallback() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-black via-neutral-950 to-black px-4">
-        {/* Sonic Collection Icon */}
+        {/* Icon */}
         <div className="mb-8">
           <div className="w-24 h-24 rounded-full bg-neutral-900 border-2 border-neutral-800 flex items-center justify-center">
-            <ListMusic className="w-12 h-12 text-amber-500" />
+            {icon}
           </div>
         </div>
 
@@ -147,8 +127,7 @@ export function CollectionDeepLinkClient({ collectionId, isRemote }: CollectionD
 
         {/* Description */}
         <p className="text-sm text-neutral-500 text-center max-w-md mb-8">
-          The Sonic app isn&apos;t currently installed on this device. Download it
-          now to view and play this collection.
+          {fallbackDescription}
         </p>
 
         {/* Download Button */}
@@ -192,5 +171,4 @@ export function CollectionDeepLinkClient({ collectionId, isRemote }: CollectionD
     default:
       return renderOpening();
   }
->>>>>>> main
 }
