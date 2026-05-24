@@ -230,7 +230,7 @@ export default async function Home() {
       <footer className="flex flex-col items-center gap-3 border-t border-white/[0.04] px-5 py-6 sm:flex-row sm:justify-between sm:px-10 sm:py-7">
         <div className="flex items-center gap-2">
           <Image src="/logo.png" alt="Sonic" width={20} height={20} className="rounded-md" />
-          <span className="font-mono text-[15px] font-bold tracking-[-1px] text-stone-100">sonic</span>
+          <span className="font-mono text-[15px] font-bold tracking-[-1px] text-stone-100">Sonic</span>
         </div>
         <p className="text-[12px] text-neutral-500">© 2026 Sonic. Built by Ishan.</p>
       </footer>

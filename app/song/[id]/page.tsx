@@ -1,5 +1,11 @@
-import type { Metadata, ResolvingMetadata } from 'next';
-import { SongDeepLinkClient } from './song-deep-link-client';
+import type { Metadata } from "next";
+import { SongDeepLinkClient } from "./song-deep-link-client";
+
+interface RouteProps {
+  params: Promise<{ id: string }>;
+
+  searchParams: Promise<{ isRemote?: string }>;
+}
 
 /**
  * Dynamic page metadata generation
@@ -10,14 +16,12 @@ import { SongDeepLinkClient } from './song-deep-link-client';
  * - Twitter Card metadata for Twitter sharing
  * - Dynamic page title based on song ID
  */
-export async function generateMetadata(
-  { params }: { params: Promise<{ id: string }> },
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+  searchParams,
+}: RouteProps): Promise<Metadata> {
   const { id } = await params;
-
-  // Get parent metadata for fallback values
-  const parentMetadata = await parent;
+  const { isRemote } = await searchParams;
 
   // Sanitize and validate song ID
   const songId = decodeURIComponent(id);
@@ -25,23 +29,23 @@ export async function generateMetadata(
   return {
     title: `Now Playing on Sonic - Song ${songId}`,
     description:
-      'Open this song in the Sonic music app. If you don\'t have Sonic installed, download it now.',
+      "Open this song in the Sonic music app. If you don't have Sonic installed, download it now.",
 
     // Open Graph metadata for social sharing
     // Enables rich preview when shared on social media
     openGraph: {
       title: `Now Playing on Sonic - Song ${songId}`,
       description:
-        'Stream this song with Sonic, the ultimate music app for everyone.',
-      type: 'music.song',
-      siteName: 'Sonic',
+        "Stream this song with Sonic, the ultimate music app for everyone.",
+      type: "music.song",
+      siteName: "Sonic",
       // These would be dynamic in a real app with actual song data
       images: [
         {
-          url: '/sonic-og-image.png',
+          url: "/sonic-og-image.png",
           width: 1200,
           height: 630,
-          alt: 'Sonic - Your Music, Your Way',
+          alt: "Sonic - Your Music, Your Way",
         },
       ],
     },
@@ -49,12 +53,12 @@ export async function generateMetadata(
     // Twitter Card metadata for Twitter sharing
     // Enables rich preview on Twitter
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: `Now Playing on Sonic - Song ${songId}`,
       description:
-        'Stream this song with Sonic, the ultimate music app for everyone.',
-      images: ['/sonic-og-image.png'],
-      creator: '@sonichq',
+        "Stream this song with Sonic, the ultimate music app for everyone.",
+      images: ["/sonic-og-image.png"],
+      creator: "@sonichq",
     },
 
     // Standard metadata

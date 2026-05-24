@@ -1,4 +1,4 @@
-import type { Metadata, ResolvingMetadata } from 'next';
+import type { Metadata } from 'next';
 import { CollectionDeepLinkClient } from './collection-deep-link-client';
 
 interface RouteProps {
@@ -10,14 +10,11 @@ interface RouteProps {
  * Dynamic page metadata generation for Collection deep link page
  */
 export async function generateMetadata(
-  { params, searchParams }: RouteProps,
-  parent: ResolvingMetadata
+  { params, searchParams }: RouteProps
 ): Promise<Metadata> {
   const { id } = await params;
   const { isRemote } = await searchParams;
 
-  // Get parent metadata for fallback values
-  const parentMetadata = await parent;
 
   // Sanitize and validate collection ID
   const collectionId = decodeURIComponent(id);
@@ -51,7 +48,7 @@ export async function generateMetadata(
       title: `Sonic Collection - ${collectionId}`,
       description: 'Stream this collection with Sonic, the ultimate music app for everyone.',
       images: ['/sonic-og-image.png'],
-      creator: '@sonichq',
+      creator: '@sonichg',
     },
 
     // Standard metadata
@@ -62,7 +59,7 @@ export async function generateMetadata(
 
     // Indicates this is a transient page
     alternates: {
-      canonical: `https://sonic.app/collection/${collectionId}${
+      canonical: `https://sonic.app/collections/${collectionId}${
         isRemoteBool ? '?isRemote=true' : ''
       }`,
     },
