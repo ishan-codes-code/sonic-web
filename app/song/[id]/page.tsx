@@ -7,14 +7,11 @@ interface RouteProps {
   searchParams: Promise<{ isRemote?: string }>;
 }
 
-<<<<<<< HEAD
 function isValidId(id: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id) ||
          /^\d+$/.test(id);
 }
 
-=======
->>>>>>> main
 /**
  * Dynamic page metadata generation
  * Creates proper SEO metadata for the song deep link page
@@ -34,7 +31,7 @@ export async function generateMetadata({
   // Sanitize and validate song ID
   const songId = decodeURIComponent(id);
 
-<<<<<<< HEAD
+
   if (!isValidId(songId)) {
     return {
       title: 'Open in Sonic',
@@ -43,8 +40,6 @@ export async function generateMetadata({
     };
   }
 
-=======
->>>>>>> main
   return {
     title: `Now Playing on Sonic - Song ${songId}`,
     description:
@@ -58,20 +53,8 @@ export async function generateMetadata({
         "Stream this song with Sonic, the ultimate music app for everyone.",
       type: "music.song",
       siteName: "Sonic",
-<<<<<<< HEAD
-=======
-      // These would be dynamic in a real app with actual song data
-      images: [
-        {
-          url: "/sonic-og-image.png",
-          width: 1200,
-          height: 630,
-          alt: "Sonic - Your Music, Your Way",
-        },
-      ],
->>>>>>> main
-    },
-
+    }
+,
     // Twitter Card metadata for Twitter sharing
     // Enables rich preview on Twitter
     twitter: {
@@ -79,11 +62,7 @@ export async function generateMetadata({
       title: `Now Playing on Sonic - Song ${songId}`,
       description:
         "Stream this song with Sonic, the ultimate music app for everyone.",
-<<<<<<< HEAD
-=======
-      images: ["/sonic-og-image.png"],
->>>>>>> main
-      creator: "@sonichq",
+      creator: "@Isham",
     },
 
     // Standard metadata
@@ -130,7 +109,6 @@ export async function generateMetadata({
  */
 export default async function SongPage({
   params,
-<<<<<<< HEAD
   searchParams,
 }: RouteProps) {
   const { id } = await params;
@@ -141,15 +119,4 @@ export default async function SongPage({
   // The actual deep linking logic runs on the client
   // We pass the songId to the client component
   return <SongDeepLinkClient songId={songId} isRemote={isRemoteBool} />;
-=======
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const songId = decodeURIComponent(id);
-
-  // The actual deep linking logic runs on the client
-  // We pass the songId to the client component
-  return <SongDeepLinkClient songId={songId} />;
->>>>>>> main
 }

@@ -6,14 +6,11 @@ interface RouteProps {
   searchParams: Promise<{ isRemote?: string }>;
 }
 
-<<<<<<< HEAD
 function isValidId(id: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id) ||
          /^\d+$/.test(id);
 }
 
-=======
->>>>>>> main
 /**
  * Dynamic page metadata generation for Collection deep link page
  */
@@ -23,7 +20,6 @@ export async function generateMetadata(
   const { id } = await params;
   const { isRemote } = await searchParams;
 
-<<<<<<< HEAD
   // Sanitize and validate collection ID
   const collectionId = decodeURIComponent(id);
 
@@ -34,12 +30,6 @@ export async function generateMetadata(
       robots: { index: false, follow: false },
     };
   }
-
-=======
-
-  // Sanitize and validate collection ID
-  const collectionId = decodeURIComponent(id);
->>>>>>> main
   const isRemoteBool = isRemote !== undefined && isRemote !== 'false';
 
   return {
@@ -54,17 +44,6 @@ export async function generateMetadata(
       description: 'Stream this collection with Sonic, the ultimate music app for everyone.',
       type: 'music.playlist',
       siteName: 'Sonic',
-<<<<<<< HEAD
-=======
-      images: [
-        {
-          url: '/sonic-og-image.png',
-          width: 1200,
-          height: 630,
-          alt: 'Sonic - Your Music, Your Way',
-        },
-      ],
->>>>>>> main
     },
 
     // Twitter Card metadata for Twitter sharing
@@ -72,11 +51,7 @@ export async function generateMetadata(
       card: 'summary_large_image',
       title: `Sonic Collection - ${collectionId}`,
       description: 'Stream this collection with Sonic, the ultimate music app for everyone.',
-<<<<<<< HEAD
-=======
-      images: ['/sonic-og-image.png'],
->>>>>>> main
-      creator: '@sonichg',
+      creator: '@Ishan',
     },
 
     // Standard metadata
