@@ -196,6 +196,7 @@ export default async function Home() {
             </div>
             <div>
               <p className="mb-0.5 text-[14px] font-bold text-neutral-400">Ishan</p>
+<<<<<<< HEAD
               <p className="mb-3 text-[12px] text-amber-300/70">@ishan-codes-code</p>
               <p className="text-[13px] leading-[1.75] text-neutral-500">
           I built Sonic because every music app started feeling soulless &mdash; built for algorithms, ads, and numbers instead of real people who truly live through music.  
@@ -209,6 +210,13 @@ export default async function Home() {
           Built for late-night drives, heartbreaks, gym motivation, peaceful mornings, random dance moments, and the songs that stay with us forever.  
           
           This is for the people who don&apos;t just hear music &mdash; they feel it.  </p>
+=======
+              <p className="mb-3 text-[12px] text-amber-300/70">@ishan-co</p>
+              <p className="text-[13px] leading-[1.75] text-neutral-500">
+                I built Sonic because every music app felt like it was designed for someone else.
+                This one&apos;s for us — the people who actually care about how music feels.
+              </p>
+>>>>>>> main
             </div>
           </div>
         </section>
