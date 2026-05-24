@@ -34,7 +34,8 @@
  * // If not, fallback UI appears after 2 seconds
  */
 
-import { APP_SCHEME_PREFIX, DEEP_LINK_PATHS } from './constants';
+
+import { APP_SCHEME_PREFIX, DEEP_LINK_PATHS } from "./constants";
 
 /**
  * Build a deep link URI for opening a song in Sonic
@@ -55,30 +56,37 @@ import { APP_SCHEME_PREFIX, DEEP_LINK_PATHS } from './constants';
  * const deepLink = buildSongDeepLink('abc123');
  * // Returns: "sonic://song/abc123"
  */
-export function buildSongDeepLink(songId: string): string {
-  if (!songId || typeof songId !== 'string') {
-    throw new Error('Invalid songId provided to buildSongDeepLink');
+export function buildSongDeepLink(songId: string, isRemote?: boolean): string {
+  if (!songId || typeof songId !== "string") {
+    throw new Error("Invalid songId provided to buildSongDeepLink");
   }
 
   // Sanitize songId - remove any URL-unsafe characters
   const sanitizedId = encodeURIComponent(songId);
 
-  return `${APP_SCHEME_PREFIX}${DEEP_LINK_PATHS.song}/${sanitizedId}`;
+  let deepLink = `${APP_SCHEME_PREFIX}${DEEP_LINK_PATHS.song}/${sanitizedId}`;
+  if (isRemote !== undefined) {
+    deepLink += `?isRemote=${isRemote}`;
+  }
+  return deepLink;
 }
 
 /**
  * Build a deep link URI for opening a collection in Sonic
  *
  * Deep Link Structure:
- * sonic://collection/[collectionId]?isRemote=true
+ * sonic://collections/[collectionId]?isRemote=true
  *
  * @param collectionId - The ID of the collection to open
  * @param isRemote - Whether the collection is remote
  * @returns The complete deep link URI
  */
-export function buildCollectionDeepLink(collectionId: string, isRemote?: boolean): string {
-  if (!collectionId || typeof collectionId !== 'string') {
-    throw new Error('Invalid collectionId provided to buildCollectionDeepLink');
+export function buildCollectionDeepLink(
+  collectionId: string,
+  isRemote?: boolean,
+): string {
+  if (!collectionId || typeof collectionId !== "string") {
+    throw new Error("Invalid collectionId provided to buildCollectionDeepLink");
   }
 
   // Sanitize collectionId - remove any URL-unsafe characters
@@ -129,7 +137,7 @@ export async function openSong(songId: string): Promise<void> {
   try {
     const deepLink = buildSongDeepLink(songId);
 
-    console.debug('[Sonic] Attempting to open deep link:', deepLink);
+    console.debug("[Sonic] Attempting to open deep link:", deepLink);
 
     // Method 1: Using window.location (most reliable for custom schemes)
     // This is the standard way to trigger deep links in modern browsers
@@ -139,7 +147,7 @@ export async function openSong(songId: string): Promise<void> {
     // The caller should implement a timeout to detect if the app didn't open
     return Promise.resolve();
   } catch (error) {
-    console.error('[Sonic] Error attempting to open deep link:', error);
+    console.error("[Sonic] Error attempting to open deep link:", error);
     // Don't throw - the app might still open even if this errors
     // The caller's timeout mechanism will handle the fallback
     return Promise.resolve();
@@ -153,17 +161,20 @@ export async function openSong(songId: string): Promise<void> {
  * @param isRemote - Whether the collection is remote
  * @returns Promise that resolves after the navigation attempt
  */
-export async function openCollection(collectionId: string, isRemote?: boolean): Promise<void> {
+export async function openCollection(
+  collectionId: string,
+  isRemote?: boolean,
+): Promise<void> {
   try {
     const deepLink = buildCollectionDeepLink(collectionId, isRemote);
 
-    console.debug('[Sonic] Attempting to open deep link:', deepLink);
+    console.debug("[Sonic] Attempting to open deep link:", deepLink);
 
     window.location.href = deepLink;
 
     return Promise.resolve();
   } catch (error) {
-    console.error('[Sonic] Error attempting to open deep link:', error);
+    console.error("[Sonic] Error attempting to open deep link:", error);
     return Promise.resolve();
   }
 }
@@ -175,11 +186,11 @@ export async function openCollection(collectionId: string, isRemote?: boolean): 
  * @returns true if the user is on a mobile device (iOS or Android)
  */
 export function isMobileDevice(): boolean {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === "undefined") return false;
 
   const ua = navigator.userAgent.toLowerCase();
   return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(
-    ua
+    ua,
   );
 }
 
@@ -190,7 +201,7 @@ export function isMobileDevice(): boolean {
  * @returns true if the user is on iOS (iPhone, iPad, iPod)
  */
 export function isIOS(): boolean {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === "undefined") return false;
 
   const ua = navigator.userAgent.toLowerCase();
   return /iphone|ipad|ipod/.test(ua);
@@ -203,7 +214,7 @@ export function isIOS(): boolean {
  * @returns true if the user is on Android
  */
 export function isAndroid(): boolean {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === "undefined") return false;
 
   const ua = navigator.userAgent.toLowerCase();
   return /android/.test(ua);
