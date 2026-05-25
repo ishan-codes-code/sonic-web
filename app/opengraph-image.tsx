@@ -6,10 +6,18 @@ export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
 export default async function Image() {
-  // Load logo from public folder
-  const logoData = await fetch(new URL('/logo.png', process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000')).then(
-    (res) => res.arrayBuffer()
-  );
+  // ✅ Fix: use VERCEL_URL (auto-injected by Vercel) instead of NEXT_PUBLIC_SITE_URL
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'http://localhost:3000';
+
+  // ✅ Fix: wrapped in try/catch so OG image still renders if logo fetch fails
+  let logoData: ArrayBuffer | null = null;
+  try {
+    logoData = await fetch(`${baseUrl}/logo.png`).then((res) => res.arrayBuffer());
+  } catch (_) {
+    // logo failed to load — OG image will still render without it
+  }
 
   return new ImageResponse(
     (
@@ -114,14 +122,16 @@ export default async function Image() {
               marginBottom: 36,
             }}
           >
-            {/* Logo image */}
-            <img
-              // @ts-ignore – ArrayBuffer accepted by next/og
-              src={logoData}
-              width={56}
-              height={56}
-              style={{ borderRadius: 14, objectFit: 'cover' }}
-            />
+            {/* Logo image — only render if fetch succeeded */}
+            {logoData && (
+              <img
+                // @ts-ignore – ArrayBuffer accepted by next/og
+                src={logoData}
+                width={56}
+                height={56}
+                style={{ borderRadius: 14, objectFit: 'cover' }}
+              />
+            )}
             {/* Amber pill badge */}
             <div
               style={{
