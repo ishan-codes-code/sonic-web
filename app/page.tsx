@@ -198,17 +198,17 @@ export default async function Home() {
               <p className="mb-0.5 text-[14px] font-bold text-neutral-400">Ishan</p>
               <p className="mb-3 text-[12px] text-amber-300/70">@ishan-codes-code</p>
               <p className="text-[13px] leading-[1.75] text-neutral-500">
-          I built Sonic because every music app started feeling soulless &mdash; built for algorithms, ads, and numbers instead of real people who truly live through music.  
+          I built Sonic because every music app started feeling soulless built for algorithms, ads, and numbers instead of real people who truly live through music.  
           Spotify and the others never gave me the feeling I was searching for. They forgot that music is emotion, memories, energy, and escape.  
           
-          So instead of waiting for someone else to change it, I decided to build the experience I always wanted &mdash; for myself, my friends, my family, and everyone who feels music deeply.  
+          So instead of waiting for someone else to change it, I decided to build the experience I always wanted for myself, my friends, my family, and everyone who feels music deeply.  
           
           Sonic isn&apos;t just another music app.  
           It&apos;s my attempt to bring passion back into listening.  
           
           Built for late-night drives, heartbreaks, gym motivation, peaceful mornings, random dance moments, and the songs that stay with us forever.  
           
-          This is for the people who don&apos;t just hear music &mdash; they feel it.  </p>
+          This is for the people who don&apos;t just hear music they feel it.  </p>
             </div>
           </div>
         </section>
